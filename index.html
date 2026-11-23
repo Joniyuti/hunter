@@ -1,0 +1,2001 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>HUNTER×HUNTER VIP — 原作全8編＋オリジナル完結編ノベル</title>
+<style>
+  :root {
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --bg-outer: #03060c;
+    --panel-bg: rgba(9, 15, 28, 0.92);
+    --panel-solid: #0a1120;
+    --gold: #f5c451;
+    --gold-dim: #8f6c1e;
+    --emerald: #34d399;
+    --crimson: #fb7185;
+    --cyan: #38bdf8;
+    --violet: #c084fc;
+    --text-main: #f8fafc;
+    --text-muted: #b8c7dc;
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100dvh;
+    background: radial-gradient(circle at 50% 30%, #0d1b2e 0%, #03060c 78%);
+    color: var(--text-main);
+    font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", "Noto Sans JP", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+  }
+
+  /* PC Side Companion Panels (Hidden automatically on narrow mobile screens) */
+  .pc-side-card {
+    display: none;
+    width: 245px;
+    max-height: calc(100dvh - 32px);
+    background: rgba(10, 17, 32, 0.9);
+    border: 1.5px solid rgba(245, 196, 81, 0.42);
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.75);
+    flex-direction: column;
+    gap: 10px;
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+
+  @media (min-width: 960px) {
+    .pc-side-card {
+      display: flex;
+    }
+  }
+
+  .pc-side-title {
+    font-size: 13.5px;
+    font-weight: 900;
+    color: var(--gold);
+    border-bottom: 1px solid rgba(245, 196, 81, 0.35);
+    padding-bottom: 5px;
+    letter-spacing: 0.5px;
+  }
+
+  .key-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    padding: 3px 0;
+    border-bottom: 1px dashed rgba(148, 163, 184, 0.18);
+  }
+
+  .kbadge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: #1d2e4a;
+    border: 1px solid #6482b0;
+    color: #fef08a;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 11px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  /* Strict 9:16 Portrait Stage with Mobile Browser Safe-Area Isolation */
+  #vn-frame {
+    position: relative;
+    aspect-ratio: 9 / 16;
+    width: min(100vw, calc((100dvh - var(--safe-top) - var(--safe-bottom)) * 9 / 16));
+    height: min(calc(100dvh - var(--safe-top) - var(--safe-bottom)), calc(100vw * 16 / 9));
+    max-height: 100dvh;
+    margin-top: var(--safe-top);
+    margin-bottom: var(--safe-bottom);
+    background: #060b16;
+    border: 2px solid #354e75;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.95);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    container-type: inline-size;
+  }
+
+  /* Top Header Bar (Never overlaps browser Chrome bar) */
+  #top-hud {
+    flex: 0 0 auto;
+    background: linear-gradient(180deg, rgba(16, 27, 48, 0.98) 0%, rgba(9, 15, 28, 0.95) 100%);
+    border-bottom: 1.5px solid var(--gold-dim);
+    padding: clamp(5px, 1.3cqw, 9px) clamp(8px, 2cqw, 14px);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 30;
+  }
+
+  .hud-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  #hud-arc-badge {
+    font-size: clamp(10px, 2.55cqw, 14px);
+    font-weight: 900;
+    color: var(--gold);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #hud-progress-pill {
+    font-size: clamp(9.5px, 2.35cqw, 13px);
+    font-weight: 800;
+    color: var(--emerald);
+    background: rgba(52, 211, 153, 0.12);
+    border: 1px solid rgba(52, 211, 153, 0.45);
+    border-radius: 999px;
+    padding: 1px 8px;
+    white-space: nowrap;
+  }
+
+  .progress-track {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  #hud-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #34d399, #f5c451, #fb7185);
+    transition: width 0.25s ease;
+  }
+
+  /* Central Visual Stage */
+  #stage-area {
+    position: relative;
+    flex: 1 1 auto;
+    width: 100%;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  #bg-canvas, #char-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  #char-canvas {
+    pointer-events: none;
+  }
+
+  /* Scene Location & Aura Tag */
+  #scene-chip {
+    position: absolute;
+    top: clamp(7px, 1.8cqw, 12px);
+    left: clamp(8px, 2cqw, 14px);
+    background: rgba(8, 14, 26, 0.78);
+    border: 1px solid rgba(245, 196, 81, 0.45);
+    border-radius: 6px;
+    padding: 3px 9px;
+    font-size: clamp(9.5px, 2.4cqw, 13px);
+    font-weight: 800;
+    color: #fef3c7;
+    z-index: 12;
+    pointer-events: none;
+  }
+
+  #mode-status-chip {
+    position: absolute;
+    top: clamp(7px, 1.8cqw, 12px);
+    right: clamp(8px, 2cqw, 14px);
+    background: rgba(16, 185, 129, 0.22);
+    border: 1px solid var(--emerald);
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: clamp(9.5px, 2.35cqw, 12.5px);
+    font-weight: 900;
+    color: #a7f3d0;
+    display: none;
+    z-index: 12;
+    pointer-events: none;
+  }
+
+  /* Choice Overlay */
+  #choice-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(4, 8, 18, 0.68);
+    backdrop-filter: blur(3px);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(12px, 3.2cqw, 20px);
+    gap: clamp(8px, 2cqw, 12px);
+    z-index: 25;
+  }
+
+  #choice-overlay.active {
+    display: flex;
+  }
+
+  .choice-prompt {
+    font-size: clamp(11px, 2.8cqw, 15px);
+    font-weight: 900;
+    color: var(--gold);
+    background: rgba(10, 17, 32, 0.95);
+    border: 1.5px solid var(--gold);
+    border-radius: 8px;
+    padding: 6px 14px;
+    text-align: center;
+  }
+
+  .choice-btn {
+    width: 100%;
+    background: linear-gradient(180deg, rgba(24, 39, 68, 0.96) 0%, rgba(12, 21, 38, 0.98) 100%);
+    border: 1.5px solid rgba(245, 196, 81, 0.72);
+    border-radius: 9px;
+    padding: clamp(9px, 2.4cqw, 14px) clamp(10px, 2.6cqw, 16px);
+    color: #ffffff;
+    font-size: clamp(11.5px, 2.9cqw, 15.5px);
+    font-weight: 800;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.65);
+    transition: transform 0.08s ease, border-color 0.14s ease, background 0.14s ease;
+  }
+
+  .choice-btn:hover, .choice-btn:active {
+    transform: scale(0.985);
+    border-color: #fef08a;
+    background: linear-gradient(180deg, rgba(120, 83, 18, 0.95) 0%, rgba(64, 42, 8, 0.98) 100%);
+  }
+
+  /* Dialogue Window (Bottom of Stage) */
+  #dialogue-box {
+    position: absolute;
+    left: clamp(7px, 1.8cqw, 12px);
+    right: clamp(7px, 1.8cqw, 12px);
+    bottom: clamp(7px, 1.8cqw, 12px);
+    background: linear-gradient(180deg, rgba(11, 19, 36, 0.93) 0%, rgba(6, 11, 22, 0.97) 100%);
+    border: 2px solid var(--gold);
+    box-shadow: inset 0 0 0 1px rgba(52, 211, 153, 0.25), 0 8px 28px rgba(0, 0, 0, 0.85);
+    border-radius: 10px;
+    padding: clamp(8px, 2.1cqw, 13px) clamp(10px, 2.5cqw, 15px);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    z-index: 20;
+  }
+
+  .dlg-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  #speaker-name {
+    font-size: clamp(12px, 3.1cqw, 16.5px);
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 0.4px;
+  }
+
+  #speaker-sub {
+    font-size: clamp(9.5px, 2.35cqw, 13px);
+    font-weight: 800;
+    color: var(--cyan);
+  }
+
+  #dialogue-text {
+    font-size: clamp(12px, 3.05cqw, 16px);
+    line-height: 1.56;
+    min-height: clamp(68px, 17cqw, 98px);
+    color: #f8fafc;
+    word-break: break-word;
+  }
+
+  .dlg-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: clamp(9.5px, 2.3cqw, 12.5px);
+    color: #fde68a;
+    margin-top: 2px;
+  }
+
+  .blink-cursor {
+    animation: pulseCursor 1s infinite;
+  }
+
+  @keyframes pulseCursor {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.25; }
+  }
+
+  /* Bottom Control Bar (Safe from mobile browser bottom bar) */
+  #bottom-controls {
+    flex: 0 0 auto;
+    background: linear-gradient(180deg, #0b1324 0%, #050912 100%);
+    border-top: 1.5px solid var(--gold-dim);
+    padding: clamp(5px, 1.3cqw, 8px) clamp(6px, 1.6cqw, 10px);
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: clamp(3px, 0.9cqw, 6px);
+    z-index: 30;
+  }
+
+  .ctrl-btn {
+    background: linear-gradient(180deg, #1b2d4b 0%, #101b30 100%);
+    border: 1px solid rgba(245, 196, 81, 0.45);
+    border-radius: 6px;
+    padding: clamp(5px, 1.3cqw, 8px) 2px;
+    color: #f1f5f9;
+    font-size: clamp(9.5px, 2.35cqw, 13px);
+    font-weight: 800;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    cursor: pointer;
+    line-height: 1.15;
+  }
+
+  .ctrl-btn:active, .ctrl-btn.is-on {
+    background: linear-gradient(180deg, #7c5814 0%, #463008 100%);
+    border-color: #fef08a;
+    color: #fffbeb;
+  }
+
+  .ctrl-key-hint {
+    font-size: clamp(8px, 1.9cqw, 10.5px);
+    color: #93c5fd;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+
+  /* Full-Screen Overlays (Title Screen & Modals) */
+  .modal-layer {
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 9, 19, 0.96);
+    z-index: 45;
+    display: none;
+    flex-direction: column;
+    padding: clamp(10px, 2.6cqw, 16px);
+    gap: clamp(8px, 2cqw, 12px);
+    overflow-y: auto;
+  }
+
+  .modal-layer.active {
+    display: flex;
+  }
+
+  #title-screen {
+    background: radial-gradient(circle at 50% 22%, rgba(16, 185, 129, 0.24) 0%, rgba(15, 23, 42, 0.95) 55%, #04070e 100%);
+    justify-content: space-between;
+    text-align: center;
+    z-index: 50;
+  }
+
+  .vip-emblem {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--emerald);
+    background: rgba(16, 185, 129, 0.16);
+    color: #6ee7b7;
+    font-size: clamp(9.5px, 2.4cqw, 13px);
+    font-weight: 900;
+    letter-spacing: 1.2px;
+  }
+
+  .main-logo {
+    font-size: clamp(22px, 5.8cqw, 34px);
+    font-weight: 900;
+    line-height: 1.15;
+    margin: 4px 0;
+    background: linear-gradient(180deg, #ffffff 0%, #fde047 52%, #d97706 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.85));
+  }
+
+  .vip-gold-tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #b45309, #f59e0b, #b45309);
+    color: #090d16;
+    font-weight: 900;
+    font-size: clamp(12px, 3.1cqw, 17px);
+    letter-spacing: 2px;
+  }
+
+  .card-box {
+    background: rgba(15, 24, 44, 0.92);
+    border: 1.5px solid rgba(245, 196, 81, 0.42);
+    border-radius: 9px;
+    padding: clamp(8px, 2.1cqw, 12px);
+    text-align: left;
+    font-size: clamp(10.5px, 2.65cqw, 14px);
+    line-height: 1.5;
+  }
+
+  .action-btn {
+    width: 100%;
+    padding: clamp(9px, 2.3cqw, 13px) 12px;
+    border-radius: 8px;
+    border: 1.5px solid var(--gold-dim);
+    background: linear-gradient(180deg, #21375c 0%, #122038 100%);
+    color: #ffffff;
+    font-size: clamp(12px, 3cqw, 16px);
+    font-weight: 900;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .action-btn:hover, .action-btn:active {
+    border-color: #fef08a;
+    transform: scale(0.99);
+  }
+
+  .action-btn.primary {
+    background: linear-gradient(180deg, #059669 0%, #065f46 100%);
+    border-color: #6ee7b7;
+  }
+
+  .action-btn.gold {
+    background: linear-gradient(180deg, #b45309 0%, #78350f 100%);
+    border-color: var(--gold);
+    color: #fef9c3;
+  }
+
+  .action-btn.danger {
+    background: linear-gradient(180deg, #9f1239 0%, #4c0519 100%);
+    border-color: var(--crimson);
+    color: #ffe4e6;
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1.5px solid var(--gold-dim);
+    padding-bottom: 6px;
+  }
+
+  .modal-title {
+    font-size: clamp(13px, 3.3cqw, 18px);
+    font-weight: 900;
+    color: var(--gold);
+  }
+
+  .mini-btn {
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(245, 196, 81, 0.55);
+    background: #1a2944;
+    color: #f8fafc;
+    font-size: clamp(10.5px, 2.6cqw, 13.5px);
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .mini-btn.danger {
+    background: #7f1d1d;
+    border-color: #fb7185;
+  }
+
+  .mini-btn.gold {
+    background: #78350f;
+    border-color: #f5c451;
+    color: #fef08a;
+  }
+
+  /* Toast Notification (Non-blocking alternative to alert/confirm) */
+  #toast-msg {
+    position: absolute;
+    top: 46px;
+    left: 12px;
+    right: 12px;
+    background: rgba(15, 23, 42, 0.97);
+    border: 1.5px solid var(--gold);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: clamp(11px, 2.75cqw, 14.5px);
+    font-weight: 800;
+    color: #fef9c3;
+    text-align: center;
+    z-index: 70;
+    display: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85);
+  }
+
+  #toast-msg.show {
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+  <!-- PC Left Companion Guide -->
+  <aside class="pc-side-card" aria-label="PCキーボード操作ガイド">
+    <div class="pc-side-title">⌨ PCキーボード操作ガイド</div>
+    <div class="key-row"><span>読み進める / 決定</span><span class="kbadge">Space / Enter / →</span></div>
+    <div class="key-row"><span>選択肢を選ぶ</span><span class="kbadge">1 〜 3</span></div>
+    <div class="key-row"><span>オート進行切替</span><span class="kbadge">A</span></div>
+    <div class="key-row"><span>既読・高速スキップ</span><span class="kbadge">S</span></div>
+    <div class="key-row"><span>バックログ（履歴）</span><span class="kbadge">L</span></div>
+    <div class="key-row"><span>セーブ画面</span><span class="kbadge">K</span></div>
+    <div class="key-row"><span>ロード画面</span><span class="kbadge">O</span></div>
+    <div class="key-row"><span>章選択・念解説・削除</span><span class="kbadge">Esc</span></div>
+    <div class="key-row"><span>BGM / SE ミュート</span><span class="kbadge">M</span></div>
+    <div style="color:var(--text-muted);font-size:11.5px;margin-top:4px;">
+      ※スマホ・タブレットでは画面タップで読み進め、下部ボタンで各種メニューを直感的に操作できます。
+    </div>
+  </aside>
+
+  <!-- Main 9:16 Portrait Visual Novel Frame -->
+  <main id="vn-frame">
+    <!-- Toast Notice -->
+    <div id="toast-msg" role="status" aria-live="polite"></div>
+
+    <!-- Top HUD -->
+    <header id="top-hud">
+      <div class="hud-top-row">
+        <span id="hud-arc-badge">第1章 ハンター試験編</span>
+        <span id="hud-progress-pill">進行 1 / 52</span>
+      </div>
+      <div class="progress-track">
+        <div id="hud-progress-bar"></div>
+      </div>
+    </header>
+
+    <!-- Main Stage -->
+    <section id="stage-area">
+      <canvas id="bg-canvas"></canvas>
+      <canvas id="char-canvas"></canvas>
+
+      <div id="scene-chip">📍 クジラ島・旅立ちの朝</div>
+      <div id="mode-status-chip">▶ AUTO</div>
+
+      <!-- Branching Choice Overlay -->
+      <div id="choice-overlay">
+        <div id="choice-prompt-text" class="choice-prompt">ハンターとしての選択</div>
+        <div id="choice-buttons-wrap" style="width:100%;display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+
+      <!-- Dialogue Box -->
+      <div id="dialogue-box">
+        <div class="dlg-header">
+          <span id="speaker-name">ゴン</span>
+          <span id="speaker-sub">強化系・ハンター志願者</span>
+        </div>
+        <div id="dialogue-text"></div>
+        <div class="dlg-footer">
+          <span id="bond-meter-text">✦ 絆・念の共鳴: 0</span>
+          <span class="blink-cursor">▼ タップ / Space / Enter</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Control Dock -->
+    <footer id="bottom-controls">
+      <button id="btn-auto" type="button" class="ctrl-btn"><span>▶ AUTO</span><span class="ctrl-key-hint">[A]</span></button>
+      <button id="btn-skip" type="button" class="ctrl-btn"><span>⏩ SKIP</span><span class="ctrl-key-hint">[S]</span></button>
+      <button id="btn-log" type="button" class="ctrl-btn"><span>📜 履歴</span><span class="ctrl-key-hint">[L]</span></button>
+      <button id="btn-save" type="button" class="ctrl-btn"><span>💾 セーブ</span><span class="ctrl-key-hint">[K]</span></button>
+      <button id="btn-load" type="button" class="ctrl-btn"><span>📂 ロード</span><span class="ctrl-key-hint">[O]</span></button>
+      <button id="btn-menu" type="button" class="ctrl-btn"><span>☰ メニュー</span><span class="ctrl-key-hint">[Esc]</span></button>
+    </footer>
+
+    <!-- 1. TITLE SCREEN -->
+    <div id="title-screen" class="modal-layer active">
+      <div style="margin-top:4px;">
+        <div class="vip-emblem">COMPLETE EDITION — ALL 8 ARCS + ORIGINAL FINALE</div>
+        <h1 class="main-logo">HUNTER×HUNTER</h1>
+        <div class="vip-gold-tag">✦ V I P ✦</div>
+      </div>
+
+      <canvas id="title-canvas" style="width:100%;height:175px;border-radius:10px;border:1.5px solid var(--gold);"></canvas>
+
+      <div class="card-box">
+        <div style="color:var(--gold);font-weight:900;margin-bottom:3px;">◆ 原作全8編 ＋ オリジナル続編＆真の完結編</div>
+        ・<b>第1〜8章：</b>ハンター試験〜キメラ＝アント〜暗黒大陸・王位継承戦まで原作の核心を凝縮再現！<br>
+        ・<b>第9〜10章（VIPオリジナル）：</b>暗黒大陸の深淵と五大厄災、そしてゴン・キルア・クラピカ・レオリオ・ジンが再び集う感動のフィナーレへ！
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <button id="btn-title-start" type="button" class="action-btn primary">▶ 最初から物語を始める <span class="kbadge">Enter</span></button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <button id="btn-title-continue" type="button" class="action-btn gold">📂 続きから再開 <span class="kbadge">O</span></button>
+          <button id="btn-title-chapters" type="button" class="action-btn">📖 章選択・念解説</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <button id="btn-title-mute" type="button" class="action-btn" style="font-size:12.5px;padding:7px;">🔊 サウンド: ON <span class="kbadge">M</span></button>
+          <button id="btn-title-del-all" type="button" class="action-btn danger" style="font-size:12.5px;padding:7px;">🗑 セーブデータ削除</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. SAVE / LOAD / DELETE MODAL -->
+    <div id="save-modal" class="modal-layer">
+      <div class="modal-header">
+        <span id="save-modal-title" class="modal-title">💾 セーブ・データ管理</span>
+        <button id="btn-close-save" type="button" class="mini-btn">✕ 閉じる [Esc]</button>
+      </div>
+      <div id="save-slots-container" style="display:flex;flex-direction:column;gap:8px;"></div>
+      <div style="margin-top:auto;padding-top:8px;border-top:1px solid rgba(255,255,255,0.12);display:flex;flex-direction:column;gap:6px;">
+        <button id="btn-purge-all-saves" type="button" class="action-btn danger">🗑 すべてのセーブデータを削除する</button>
+      </div>
+    </div>
+
+    <!-- 3. BACKLOG MODAL -->
+    <div id="log-modal" class="modal-layer">
+      <div class="modal-header">
+        <span class="modal-title">📜 会話バックログ</span>
+        <button id="btn-close-log" type="button" class="mini-btn">✕ 閉じる [Esc]</button>
+      </div>
+      <div id="backlog-list" style="display:flex;flex-direction:column;gap:7px;overflow-y:auto;"></div>
+    </div>
+
+    <!-- 4. CHAPTER JUMP, NEN SYSTEM & SYSTEM MENU MODAL -->
+    <div id="menu-modal" class="modal-layer">
+      <div class="modal-header">
+        <span class="modal-title">☰ ハンターライセンス・メニュー</span>
+        <button id="btn-close-menu" type="button" class="mini-btn">✕ 戻る [Esc]</button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+        <button id="btn-menu-mute" type="button" class="mini-btn gold">🔊 音声: ON [M]</button>
+        <button id="btn-menu-title" type="button" class="mini-btn">🏠 タイトルへ戻る</button>
+      </div>
+
+      <div class="card-box">
+        <div style="color:var(--emerald);font-weight:900;margin-bottom:4px;">◆ 念能力・六性図ミニ事典</div>
+        <div style="font-size:11.5px;line-height:1.45;">
+          ・<b>強化系（ゴン）：</b>モノや肉体の働きを高める攻防バランスの極み。<br>
+          ・<b>変化系（キルア／ヒソカ）：</b>オーラの性質を電気や伸縮自在の愛へ変える。<br>
+          ・<b>具現化系（クラピカ）：</b>オーラを鎖などの実体へ物質化。「制約と誓約」で絶大な力を得る。<br>
+          ・<b>放出系（レオリオ／レイザー）：</b>オーラを体から切り離し遠距離へ飛ばす。<br>
+          ・<b>操作系（イルミ／シャルナーク）：</b>生物や物体にオーラを注ぎ自在に操る。<br>
+          ・<b>特質系（クロロ／アルカ）：</b>他の5系統に属さない唯一無二の異能。
+        </div>
+      </div>
+
+      <div style="font-weight:900;color:var(--gold);font-size:13px;">◆ チャプタージャンプ（全10章）</div>
+      <div id="chapter-list-wrap" style="display:flex;flex-direction:column;gap:6px;"></div>
+    </div>
+  </main>
+
+  <!-- PC Right Companion Story Map -->
+  <aside class="pc-side-card" aria-label="物語チャプター構成">
+    <div class="pc-side-title">📖 全10章ストーリー構成</div>
+    <div style="font-size:11.5px;color:#cbd5e1;display:flex;flex-direction:column;gap:4px;">
+      <div><b style="color:#6ee7b7;">第1章</b> ハンター試験編</div>
+      <div><b style="color:#6ee7b7;">第2章</b> ゾルディック家編</div>
+      <div><b style="color:#6ee7b7;">第3章</b> 天空闘技場編</div>
+      <div><b style="color:#6ee7b7;">第4章</b> ヨークシンシティ編</div>
+      <div><b style="color:#6ee7b7;">第5章</b> グリードアイランド編</div>
+      <div><b style="color:#6ee7b7;">第6章</b> キメラ＝アント編</div>
+      <div><b style="color:#6ee7b7;">第7章</b> 会長選挙・アルカ編</div>
+      <div><b style="color:#6ee7b7;">第8章</b> 暗黒大陸・王位継承戦編</div>
+      <div style="border-top:1px solid rgba(245,196,81,0.35);margin-top:4px;padding-top:4px;">
+        <b style="color:#fde047;">第9章 [VIP]</b> 暗黒大陸の深淵・五大厄災
+      </div>
+      <div><b style="color:#fde047;">第10章 [VIP]</b> 世界樹の頂と未来への約束（完結）</div>
+    </div>
+    <div id="pc-side-status" style="margin-top:auto;padding-top:8px;border-top:1px solid rgba(255,255,255,0.14);font-size:11.5px;color:#fef08a;">
+      現在の絆・念の共鳴: 0
+    </div>
+  </aside>
+
+<script>
+(() => {
+  'use strict';
+
+  const SAVE_STORAGE_KEY = 'hxh_vip_saves_v1';
+  const UNLOCK_STORAGE_KEY = 'hxh_vip_unlocked_arc_v1';
+  const MAX_SLOTS = 3;
+
+  /* =========================================================
+     1. NON-BLOCKING TOAST & TWO-STEP SAFE CONFIRMATION
+     ========================================================= */
+  let toastTimeout = null;
+  function showToast(text, duration = 2800) {
+    const el = document.getElementById('toast-msg');
+    if (!el) return;
+    el.textContent = text;
+    el.classList.add('show');
+    if (toastTimeout) clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+      el.classList.remove('show');
+    }, duration);
+  }
+
+  /* =========================================================
+     2. WEB AUDIO SYNTHESIZER (Emotional BGM & Crisp SE)
+     ========================================================= */
+  class VNSoundEngine {
+    constructor() {
+      this.ctx = null;
+      this.enabled = true;
+      this.bgmTimer = null;
+      this.currentTrack = null;
+      this.step = 0;
+    }
+
+    unlock() {
+      try {
+        if (!this.ctx) {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (AC) this.ctx = new AC();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      } catch (_e) {
+        // Ignore browser audio policy errors
+      }
+    }
+
+    toggleMute() {
+      this.enabled = !this.enabled;
+      if (!this.enabled) {
+        this.stopBgm();
+      } else if (this.currentTrack) {
+        const tr = this.currentTrack;
+        this.currentTrack = null;
+        this.playBgm(tr);
+      }
+      return this.enabled;
+    }
+
+    playNote(freq, dur = 0.2, type = 'sine', vol = 0.035, delay = 0) {
+      if (!this.enabled || !freq) return;
+      this.unlock();
+      if (!this.ctx) return;
+      try {
+        const t = this.ctx.currentTime + delay;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, t);
+        gain.gain.setValueAtTime(vol, t);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(t);
+        osc.stop(t + dur + 0.015);
+      } catch (_e) {
+        // Ignore audio scheduling errors
+      }
+    }
+
+    sfxAdvance() {
+      this.playNote(660, 0.055, 'triangle', 0.035, 0);
+      this.playNote(880, 0.07, 'sine', 0.03, 0.03);
+    }
+
+    sfxChoice() {
+      [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+        this.playNote(f, 0.14, 'triangle', 0.05, i * 0.055);
+      });
+    }
+
+    sfxAura() {
+      this.playNote(220, 0.25, 'sawtooth', 0.04, 0);
+      this.playNote(440, 0.28, 'sine', 0.05, 0.05);
+      this.playNote(659.25, 0.35, 'triangle', 0.045, 0.12);
+    }
+
+    sfxTypeTick() {
+      this.playNote(920, 0.025, 'sine', 0.012, 0);
+    }
+
+    stopBgm() {
+      if (this.bgmTimer) {
+        clearInterval(this.bgmTimer);
+        this.bgmTimer = null;
+      }
+    }
+
+    playBgm(trackName) {
+      if (this.currentTrack === trackName && this.bgmTimer) return;
+      this.currentTrack = trackName;
+      this.stopBgm();
+      if (!this.enabled) return;
+
+      const melodies = {
+        adventure: {
+          ms: 280,
+          type: 'triangle',
+          vol: 0.024,
+          notes: [392.00, 440.00, 493.88, 587.33, 659.25, 587.33, 493.88, 440.00, 523.25, 587.33, 659.25, 783.99, 659.25, 587.33, 493.88, 0]
+        },
+        tension: {
+          ms: 230,
+          type: 'sawtooth',
+          vol: 0.016,
+          notes: [220.00, 233.08, 220.00, 196.00, 220.00, 261.63, 246.94, 207.65, 220.00, 233.08, 261.63, 293.66, 261.63, 233.08, 207.65, 0]
+        },
+        sorrow: {
+          ms: 360,
+          type: 'sine',
+          vol: 0.032,
+          notes: [329.63, 392.00, 493.88, 523.25, 493.88, 392.00, 349.23, 329.63, 293.66, 349.23, 440.00, 493.88, 440.00, 349.23, 329.63, 0]
+        },
+        finale: {
+          ms: 310,
+          type: 'sine',
+          vol: 0.034,
+          notes: [523.25, 659.25, 783.99, 1046.50, 987.77, 783.99, 659.25, 783.99, 880.00, 1046.50, 1174.66, 1318.51, 1046.50, 987.77, 783.99, 0]
+        }
+      };
+
+      const tr = melodies[trackName] || melodies.adventure;
+      this.step = 0;
+      this.bgmTimer = setInterval(() => {
+        if (!this.enabled) return;
+        const n = tr.notes[this.step % tr.notes.length];
+        if (n > 0) this.playNote(n, (tr.ms / 1000) * 1.15, tr.type, tr.vol, 0);
+        this.step++;
+      }, tr.ms);
+    }
+  }
+
+  const audio = new VNSoundEngine();
+
+  /* =========================================================
+     3. COMPLETE STORY SCRIPT (ALL 8 CANON ARCS + 2 VIP FINALE ARCS)
+     ========================================================= */
+  const CHAPTERS = [
+    { id: 1, title: '第1章 ハンター試験編', sub: 'クジラ島からの旅立ちと4人の出会い', bg: 'exam', bgm: 'adventure' },
+    { id: 2, title: '第2章 ゾルディック家編', sub: 'ククルーマウンテン・友を取り戻す試練', bg: 'zoldyck', bgm: 'tension' },
+    { id: 3, title: '第3章 天空闘技場編', sub: '念の覚醒・四大行とヒソカとの約束', bg: 'arena', bgm: 'adventure' },
+    { id: 4, title: '第4章 ヨークシンシティ編', sub: '緋の眼の誓いと幻影旅団のレクイエム', bg: 'yorknew', bgm: 'tension' },
+    { id: 5, title: '第5章 グリードアイランド編', sub: 'ジンの遺したゲームと一握りの火薬', bg: 'gi', bgm: 'adventure' },
+    { id: 6, title: '第6章 キメラ＝アント編', sub: '王と軍儀の少女・魂を削る約束', bg: 'ant', bgm: 'sorrow' },
+    { id: 7, title: '第7章 会長選挙・アルカ編', sub: '願いの代償と世界樹の頂での再会', bg: 'worldtree', bgm: 'finale' },
+    { id: 8, title: '第8章 暗黒大陸・王位継承戦編', sub: 'ブラックホエール号・漆黒の王位継承', bg: 'whale', bgm: 'tension' },
+    { id: 9, title: '第9章 [VIP] 暗黒大陸の深淵', sub: '五大厄災の真実とドン＝フリークスの記録', bg: 'darkcontinent', bgm: 'tension' },
+    { id: 10, title: '第10章 [VIP] 世界樹の頂と未来への約束', sub: 'オリジナル最終完結編・それぞれの道標', bg: 'dawn', bgm: 'finale' }
+  ];
+
+  // Compact, deeply faithful, emotionally resonant script covering the entire saga + VIP original finale
+  const SCRIPT = [
+    // --- CHAPTER 1: HUNTER EXAM ---
+    {
+      arc: 1, loc: '📍 クジラ島〜試験会場', bg: 'exam', bgm: 'adventure',
+      speaker: 'ナレーション', sub: '物語の幕開け', left: 'gon', right: null, aura: 'emerald',
+      text: '偉大なハンターである父・ジンに会うため、12歳の少年ゴンはクジラ島を旅立った。嵐の船上で出会ったクラピカ、レオリオと共に、過酷なハンター試験へと挑む。'
+    },
+    {
+      arc: 1, loc: '📍 第1次試験・地下マラソン', bg: 'exam', bgm: 'adventure',
+      speaker: 'キルア', sub: '元・暗殺一家の少年', left: 'gon', right: 'killua', aura: 'cyan',
+      text: '「オレはキルア、12歳。……なぁゴン、お前オレと同い年だろ？ なんか面白そうだから一緒に行動してやるよ」'
+    },
+    {
+      arc: 1, loc: '📍 最終試験・一騎打ち', bg: 'exam', bgm: 'tension',
+      speaker: 'ゴン', sub: '折れない真っ直ぐな瞳', left: 'gon', right: 'hisoka', aura: 'emerald',
+      text: '「ぼくは折れない！ ここで引いたら、ジンに会う資格なんてないんだ！」――半蔵の猛攻にも決して心を折らず、ゴンはついにハンターライセンスを手にする。'
+    },
+    {
+      arc: 1, loc: '📍 試験会場・決意の瞬間', bg: 'exam', bgm: 'tension',
+      speaker: 'クラピカ', sub: 'クルタ族の生き残り', left: 'kurapika', right: 'leorio', aura: 'crimson',
+      text: 'イルミの暗示によりキルアは実家へ連れ戻された。合格を果たしたゴン、クラピカ、レオリオは迷わず誓う。「キルアを助けに行こう！」',
+      choice: {
+        prompt: 'キルアを救うため、ゴンとしてどう言葉を発する？',
+        options: [
+          { label: '「キルアは友達だ！ 必ず迎えに行く！」', bond: 15, reply: '「ああ、当たり前だ！ 仲間を見捨てるハンターなどいない！」クラピカとレオリオも力強く頷いた。' },
+          { label: '「まずは全員で万全の準備を整えて向かおう」', bond: 10, reply: '「冷静な判断だ、ゴン。ゾルディック家の本拠地・ククルーマウンテンへ出発しよう！」' }
+        ]
+      }
+    },
+
+    // --- CHAPTER 2: ZOLDYCK FAMILY ---
+    {
+      arc: 2, loc: '📍 ククルーマウンテン・試しの門', bg: 'zoldyck', bgm: 'tension',
+      speaker: 'レオリオ', sub: '熱き医学生志望', left: 'gon', right: 'leorio', aura: 'emerald',
+      text: '「うおおおっ！ 開けぇぇっ！！」重さ4トンを超える『試しの門』を、特訓を重ねた3人が力を合わせてついに押し開けた！'
+    },
+    {
+      arc: 2, loc: '📍 ゾルディック家・執事室', bg: 'zoldyck', bgm: 'adventure',
+      speaker: 'キルア', sub: '呪縛を断ち切った笑顔', left: 'gon', right: 'killua', aura: 'cyan',
+      text: '父シルバの許しを得て姿を現したキルア。「遅いよゴン！ 待ちくたびれたぜ！」――二人は再び肩を並べ、強くなるため天空闘技場へと向かう。'
+    },
+
+    // --- CHAPTER 3: HEAVENS ARENA ---
+    {
+      arc: 3, loc: '📍 天空闘技場・200階クラス', bg: 'arena', bgm: 'adventure',
+      speaker: 'ウイング（語り）', sub: '心源流拳法師範代', left: 'gon', right: 'killua', aura: 'gold',
+      text: '200階クラスの洗礼を受けた二人は、師ウイングのもとで『念（ねん）』――纏・絶・練・発の四大行を体得。オーラを操る真のハンターへと覚醒する。'
+    },
+    {
+      arc: 3, loc: '📍 天空闘技場・第44番プレートの返却', bg: 'arena', bgm: 'tension',
+      speaker: 'ヒソカ', sub: '気まぐれな奇術師', left: 'gon', right: 'hisoka', aura: 'violet',
+      text: '「ククク……見事だよゴン。そのプレートは受け取っておこう。次にボクと本気で戦うのは、キミがもっと熟してからだ♠」',
+      choice: {
+        prompt: 'ヒソカに一撃を入れ、約束を果たした時のゴンの想いは？',
+        options: [
+          { label: '「次はこの拳で、絶対に勝つ！」', bond: 15, reply: 'ゴンは自身の成長と「戦う怖さと喜び」を胸に刻み、次の目的地・ヨークシンシティを目指す！' },
+          { label: '「キルア、一緒にさらに強い技を磨こう！」', bond: 15, reply: '「おう！ 俺たちの念はまだまだここからだぜ！」二人の絆はさらに深まった。' }
+        ]
+      }
+    },
+
+    // --- CHAPTER 4: YORKNEW CITY ---
+    {
+      arc: 4, loc: '📍 ヨークシンシティ・9月1日', bg: 'yorknew', bgm: 'tension',
+      speaker: 'クラピカ', sub: '導く鎖（ダウジングチェーン）', left: 'kurapika', right: 'chrollo', aura: 'crimson',
+      text: '世界最大のオークションの裏で暗躍する盗賊集団『幻影旅団（クモ）』。同胞の仇を討つため、クラピカは「旅団以外に鎖を使えば死ぬ」という命の制約と誓約を課していた。'
+    },
+    {
+      arc: 4, loc: '📍 夜の街・鎮魂歌（レクイエム）', bg: 'yorknew', bgm: 'sorrow',
+      speaker: 'クロロ', sub: '幻影旅団・団長', left: 'kurapika', right: 'chrollo', aura: 'violet',
+      text: 'ウボォーギンを葬り、団長クロロを捕らえたクラピカ。だがゴンとキルアが人質となった時、クラピカは復讐よりも「友の命」を選び、クロロに念を封じる鎖（ジャッジメントチェーン）を打ち込んだ。'
+    },
+    {
+      arc: 4, loc: '📍 ヨークシンの夜明け', bg: 'yorknew', bgm: 'adventure',
+      speaker: 'クラピカ', sub: '緋の眼の静かな決意', left: 'kurapika', right: 'gon', aura: 'crimson',
+      text: '「ありがとう、ゴン、キルア。君たちのおかげで私は人間としての心を失わずに済んだ……」――同胞の眼を取り戻す旅は続き、ゴンたちは次の手がかり『グリードアイランド』へ！'
+    },
+
+    // --- CHAPTER 5: GREED ISLAND ---
+    {
+      arc: 5, loc: '📍 グリードアイランド・マサドラの草原', bg: 'gi', bgm: 'adventure',
+      speaker: 'ビスケ（語り）', sub: '二ツ星ストーンハンター', left: 'gon', right: 'killua', aura: 'gold',
+      text: 'ジンが仲間と創り上げた現実のカードゲーム『G・I』。師匠ビスケの厳しい修行を経て、ゴンは必殺技『ジャジャン拳』、キルアは『電気のオーラ』を完成させる。'
+    },
+    {
+      arc: 5, loc: '📍 ドッジボール決戦＆爆弾魔ゲンスルー', bg: 'gi', bgm: 'tension',
+      speaker: 'ゴン', sub: '一握りの火薬（リトルフラワー）突破', left: 'gon', right: 'killua', aura: 'emerald',
+      text: 'レイザーとの死闘を親友キルアとの完璧な信頼で制し、爆弾魔ゲンスルーをも撃破！ 指定ポケットカード100種を完全制覇したゴンは、ついにジンのもとへ飛ぶ――はずだった。'
+    },
+
+    // --- CHAPTER 6: CHIMERA ANT ---
+    {
+      arc: 6, loc: '📍 NGL〜東ゴルトー共和国', bg: 'ant', bgm: 'sorrow',
+      speaker: 'ナレーション', sub: '生命の進化と悲劇', left: 'gon', right: 'killua', aura: 'crimson',
+      text: '人間を捕食し進化する危険生物『キメラ＝アント』。敬愛するカイトを護衛軍ネフェルピトーに奪われたゴンは、底知れぬ怒りと自責の念に飲み込まれていく。'
+    },
+    {
+      arc: 6, loc: '📍 東ゴルトー宮殿・王の間', bg: 'ant', bgm: 'sorrow',
+      speaker: 'メルエム', sub: 'キメラ＝アントの王', left: 'meruem', right: 'komugi', aura: 'gold',
+      text: '「コムギ……いるか？」「はい、ずっとここにおります」――最強の生物として生まれた王メルエムは、盲目の軍儀少女コムギとの対局を通じて愛と人間性を知り、静かにその生涯を閉じた。'
+    },
+    {
+      arc: 6, loc: '📍 宮殿地下・すべてを懸けた誓約', bg: 'ant', bgm: 'sorrow',
+      speaker: 'ゴン', sub: '「もうこれで終わってもいい」', left: 'gon', right: 'killua', aura: 'crimson',
+      text: '「だから、ありったけを――！」すべての未来を代償にした強制成長の拳でピトーを討ったゴンは、瀕死の重傷を負い病院の生命維持装置に繋がれる。',
+      choice: {
+        prompt: '絶望的な状況のゴンを救うため、キルアが下した決断は？',
+        options: [
+          { label: '「オレが絶対にアルカの力でゴンを治す！」', bond: 20, reply: '「待ってろゴン、絶対に助けるからな！」キルアは一族の監視を振り切り、妹アルカのもとへ走る！' },
+          { label: '「ナニカとアルカ、二人とも絶対に守って救う！」', bond: 20, reply: '「もう二度とアルカを閉じ込めさせない！」キルアの無償の愛が奇跡への扉を開いた。' }
+        ]
+      }
+    },
+
+    // --- CHAPTER 7: ELECTION & ALUKA ---
+    {
+      arc: 7, loc: '📍 病院・奇跡の光', bg: 'worldtree', bgm: 'finale',
+      speaker: 'アルカ（ナニカ）', sub: '「あい」', left: 'killua', right: 'alluka', aura: 'cyan',
+      text: '「ゴン、治れ」――キルアの無償の「お願い」に応えたナニカの光が病室を包み込み、ゴンは奇跡の完全復活を遂げた！'
+    },
+    {
+      arc: 7, loc: '📍 世界樹の頂・父と子の対話', bg: 'worldtree', bgm: 'finale',
+      speaker: 'ジン', sub: '二ツ星遺跡ハンター', left: 'gon', right: 'ging', aura: 'gold',
+      text: '「大切なものは、欲しいものより先に来た」――世界樹の頂でついに父ジンと再会したゴンは、道草の先にあった仲間と冒険の尊さをかみしめる。そして物語は未知の『暗黒大陸』へ！'
+    },
+
+    // --- CHAPTER 8: DARK CONTINENT & SUCCESSION CONTEST ---
+    {
+      arc: 8, loc: '📍 巨大船ブラックホエール号', bg: 'whale', bgm: 'tension',
+      speaker: 'クラピカ', sub: '第14王子ワブルの護衛', left: 'kurapika', right: 'leorio', aura: 'crimson',
+      text: '未知なる『暗黒大陸』への渡航船ブラックホエール号。船内ではカキン帝国14人の王子による血塗られた王位継承戦と、幻影旅団・ヒソカの因縁が渦巻いていた。'
+    },
+    {
+      arc: 8, loc: '📍 ブラックホエール号・下層医療室', bg: 'whale', bgm: 'tension',
+      speaker: 'レオリオ', sub: '十二支ん・医療班', left: 'kurapika', right: 'leorio', aura: 'emerald',
+      text: '「クラピカ、無茶だけはするなよ！ オレが必ず全員の命を繋ぎ止める！」――絶体絶命の継承戦の最中、クラピカは最悪の悲劇を回避する「平和的休戦協定」の糸口を掴み始める。'
+    },
+
+    // --- CHAPTER 9 [VIP ORIGINAL]: ABYSS OF THE DARK CONTINENT ---
+    {
+      arc: 9, loc: '📍 【VIP続編】暗黒大陸・メビウス湖外縁', bg: 'darkcontinent', bgm: 'tension',
+      speaker: 'ジン', sub: '真の航路を切り拓く者', left: 'ging', right: 'kurapika', aura: 'gold',
+      text: '【ここからVIPオリジナル続編】ブラックホエール号の継承戦を犠牲最小限で終結させたクラピカとレオリオは、ついにジンたち先遣隊と暗黒大陸の岸辺で合流した。'
+    },
+    {
+      arc: 9, loc: '📍 【VIP続編】古代遺跡・『新世界紀行・東』の石碑', bg: 'darkcontinent', bgm: 'tension',
+      speaker: 'ジン', sub: 'ドン＝フリークスの遺志', left: 'ging', right: 'leorio', aura: 'gold',
+      text: '「見ろ、これが300年以上も暗黒大陸を旅し続ける俺たちの先祖、ドン＝フリークスの最新の手記だ。五大厄災は人類を滅ぼす呪いじゃなく、自然と共生するための『試練の門』だったんだ！」'
+    },
+    {
+      arc: 9, loc: '📍 【VIP続編】厄災の共鳴・緊急救援信号', bg: 'darkcontinent', bgm: 'sorrow',
+      speaker: 'クラピカ', sub: '絶対時間（エンペラータイム）の限界', left: 'kurapika', right: 'leorio', aura: 'crimson',
+      text: 'しかし遺跡の深部で古代の防御システム『ブリオンとアイの融合体』が暴走！ 寿命を削りすぎたクラピカが倒れかけ、レオリオの放出系医療念能力が限界を超えて叫ぶ！'
+    },
+    {
+      arc: 9, loc: '📍 【VIP続編】空から降り立つ二つの光', bg: 'darkcontinent', bgm: 'finale',
+      speaker: 'ゴン', sub: '再び目覚めた純粋なオーラ', left: 'gon', right: 'killua', aura: 'emerald',
+      text: '「待たせたな、クラピカ！ レオリオ！」――世界樹での修練を経て自らのオーラを取り戻したゴンと、神速（カンムル）で駆けつけたキルアが、暗黒大陸の空からついに到着した！',
+      choice: {
+        prompt: '4人が再び揃った瞬間、古代の厄災へ放つ合体作戦は？',
+        options: [
+          { label: '「4人の念を一つに重ね、厄災の核を浄化する！」', bond: 30, reply: '強化・変化・具現化・放出の4つのオーラが黄金の螺旋を描き、暴走する古代機構を優しく鎮めた！' },
+          { label: '「キルアの電撃で動きを止め、ゴンの拳で扉を開く！」', bond: 25, reply: '阿吽の呼吸で放たれた連撃が遺跡の封印を解き放ち、希望の夜明けが差し込んだ！' }
+        ]
+      }
+    },
+
+    // --- CHAPTER 10 [VIP ORIGINAL]: TRUE FINALE ---
+    {
+      arc: 10, loc: '📍 【VIP完結編】暗黒大陸の夜明け・無限の地平', bg: 'dawn', bgm: 'finale',
+      speaker: 'レオリオ', sub: '希望の医師', left: 'leorio', right: 'kurapika', aura: 'emerald',
+      text: '古代の叡智『万病を癒やす三原水』の力でクラピカの寿命の代償は癒やされ、同胞たちの魂も安らかな眠りについた。「やったな、クラピカ……！ もう一人で背負うなよ！」'
+    },
+    {
+      arc: 10, loc: '📍 【VIP完結編】キルアとアルカの笑顔', bg: 'dawn', bgm: 'finale',
+      speaker: 'キルア', sub: '自由を手にした少年', left: 'killua', right: 'alluka', aura: 'cyan',
+      text: '「お兄ちゃん、みんなと一緒の冒険、すっごく楽しいね！」「ああ、アルカ。世界はまだまだ広いぜ！」――影を抜け出した兄妹は、満面の笑顔で未来を見つめる。'
+    },
+    {
+      arc: 10, loc: '📍 【VIP完結編】ジンからゴンへ', bg: 'dawn', bgm: 'finale',
+      speaker: 'ジン', sub: 'ハンターの誇り', left: 'ging', right: 'gon', aura: 'gold',
+      text: '「ゴン、お前はもう俺の背中を追うだけの子供じゃない。自分の足で、自分の仲間と『まだ見ぬ世界』を歩く立派なハンターだ」'
+    },
+    {
+      arc: 10, loc: '📍 【VIP完結編】最終話・約束の場所へ', bg: 'dawn', bgm: 'finale',
+      speaker: 'ゴン', sub: 'HUNTER×HUNTER VIP 完結', left: 'gon', right: 'killua', aura: 'emerald',
+      text: '「うん！ ぼくたちの冒険は、これからが本番だよね、キルア！ クラピカ！ レオリオ！」――4人の笑い声が暗黒大陸の黄金の空へと響き渡り、新たな伝説が幕を開ける。【完】'
+    }
+  ];
+
+  /* =========================================================
+     4. APPLICATION STATE & LOCALSTORAGE SAVE / DELETE MANAGER
+     ========================================================= */
+  const state = {
+    index: 0,
+    bond: 0,
+    unlockedArc: 1,
+    autoMode: false,
+    skipMode: false,
+    typing: false,
+    displayedChars: 0,
+    fullText: '',
+    backlog: [],
+    saveMode: 'save', // 'save' or 'load'
+    pendingDeleteSlot: null,
+    pendingPurgeAll: false
+  };
+
+  try {
+    const savedArc = parseInt(localStorage.getItem(UNLOCK_STORAGE_KEY) || '1', 10);
+    if (!Number.isNaN(savedArc)) state.unlockedArc = Math.max(1, Math.min(10, savedArc));
+  } catch (_e) {
+    // Ignore storage read errors
+  }
+
+  function unlockArcUpTo(arcNum) {
+    if (arcNum > state.unlockedArc) {
+      state.unlockedArc = Math.min(10, arcNum);
+      try {
+        localStorage.setItem(UNLOCK_STORAGE_KEY, String(state.unlockedArc));
+      } catch (_e) {
+        // Ignore storage write errors
+      }
+    }
+  }
+
+  function readSaveSlots() {
+    try {
+      const raw = localStorage.getItem(SAVE_STORAGE_KEY);
+      if (!raw) return {};
+      return JSON.parse(raw) || {};
+    } catch (_e) {
+      return {};
+    }
+  }
+
+  function writeSaveSlots(obj) {
+    try {
+      localStorage.setItem(SAVE_STORAGE_KEY, JSON.stringify(obj));
+    } catch (_e) {
+      showToast('セーブの保存に失敗しました。');
+    }
+  }
+
+  function saveToSlot(slotId) {
+    const line = SCRIPT[state.index] || SCRIPT[0];
+    const chap = CHAPTERS.find(c => c.id === line.arc) || CHAPTERS[0];
+    const slots = readSaveSlots();
+    const now = new Date();
+    const ts = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+    slots[String(slotId)] = {
+      slotId,
+      index: state.index,
+      bond: state.bond,
+      arcTitle: chap.title,
+      loc: line.loc,
+      timestamp: ts,
+      backlog: state.backlog.slice(-30)
+    };
+    writeSaveSlots(slots);
+    state.pendingDeleteSlot = null;
+    audio.sfxChoice();
+    showToast(`スロット ${slotId} にセーブしました！`);
+    renderSaveSlots();
+  }
+
+  function loadFromSlot(slotId) {
+    const slots = readSaveSlots();
+    const data = slots[String(slotId)];
+    if (!data) {
+      showToast('このスロットにはデータがありません。');
+      return;
+    }
+    state.index = Math.max(0, Math.min(SCRIPT.length - 1, data.index || 0));
+    state.bond = data.bond || 0;
+    state.backlog = Array.isArray(data.backlog) ? data.backlog : [];
+    state.autoMode = false;
+    state.skipMode = false;
+    closeAllModals();
+    document.getElementById('title-screen').classList.remove('active');
+    audio.sfxChoice();
+    showToast(`スロット ${slotId} からロードしました！`);
+    presentLine(true);
+  }
+
+  function deleteSlot(slotId) {
+    if (state.pendingDeleteSlot !== slotId) {
+      state.pendingDeleteSlot = slotId;
+      showToast(`もう一度「削除確定」を押すとスロット ${slotId} を削除します。`);
+      renderSaveSlots();
+      return;
+    }
+    const slots = readSaveSlots();
+    delete slots[String(slotId)];
+    writeSaveSlots(slots);
+    state.pendingDeleteSlot = null;
+    audio.sfxAdvance();
+    showToast(`スロット ${slotId} のセーブデータを削除しました。`);
+    renderSaveSlots();
+  }
+
+  function purgeAllSaves() {
+    if (!state.pendingPurgeAll) {
+      state.pendingPurgeAll = true;
+      showToast('確認：もう一度「全データ削除確定」を押すと全スロットが消去されます。');
+      document.getElementById('btn-purge-all-saves').textContent = '⚠ 全データ削除確定（取り消し不可）';
+      return;
+    }
+    try {
+      localStorage.removeItem(SAVE_STORAGE_KEY);
+    } catch (_e) {
+      // Ignore
+    }
+    state.pendingPurgeAll = false;
+    state.pendingDeleteSlot = null;
+    document.getElementById('btn-purge-all-saves').textContent = '🗑 すべてのセーブデータを削除する';
+    audio.sfxAdvance();
+    showToast('すべてのセーブデータを削除しました。');
+    renderSaveSlots();
+  }
+
+  /* =========================================================
+     5. HIGH-DPI CANVAS BACKGROUND & CHARACTER RENDERING
+     ========================================================= */
+  function fitCanvas(canvas) {
+    if (!canvas) return { ctx: null, w: 0, h: 0 };
+    const rect = canvas.getBoundingClientRect();
+    const w = Math.max(1, Math.round(rect.width));
+    const h = Math.max(1, Math.round(rect.height));
+    const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+    const pw = Math.round(w * dpr);
+    const ph = Math.round(h * dpr);
+    if (canvas.width !== pw || canvas.height !== ph) {
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx, w, h };
+  }
+
+  function drawSceneBackground(ctx, w, h, theme, t) {
+    const grad = ctx.createLinearGradient(0, 0, 0, h);
+    if (theme === 'exam') {
+      grad.addColorStop(0, '#0ea5e9');
+      grad.addColorStop(0.55, '#38bdf8');
+      grad.addColorStop(0.56, '#15803d');
+      grad.addColorStop(1, '#052e16');
+    } else if (theme === 'zoldyck') {
+      grad.addColorStop(0, '#0f172a');
+      grad.addColorStop(0.55, '#1e293b');
+      grad.addColorStop(1, '#090d16');
+    } else if (theme === 'arena') {
+      grad.addColorStop(0, '#1e1b4b');
+      grad.addColorStop(0.5, '#312e81');
+      grad.addColorStop(1, '#0f172a');
+    } else if (theme === 'yorknew') {
+      grad.addColorStop(0, '#090d16');
+      grad.addColorStop(0.55, '#3b0764');
+      grad.addColorStop(1, '#1e1b4b');
+    } else if (theme === 'gi') {
+      grad.addColorStop(0, '#0284c7');
+      grad.addColorStop(0.5, '#7dd3fc');
+      grad.addColorStop(0.51, '#22c55e');
+      grad.addColorStop(1, '#14532d');
+    } else if (theme === 'ant') {
+      grad.addColorStop(0, '#1c1917');
+      grad.addColorStop(0.55, '#4c0519');
+      grad.addColorStop(1, '#090d16');
+    } else if (theme === 'worldtree') {
+      grad.addColorStop(0, '#0369a1');
+      grad.addColorStop(0.45, '#fde68a');
+      grad.addColorStop(1, '#064e3b');
+    } else if (theme === 'whale') {
+      grad.addColorStop(0, '#082f49');
+      grad.addColorStop(0.6, '#0f172a');
+      grad.addColorStop(1, '#020617');
+    } else if (theme === 'darkcontinent') {
+      grad.addColorStop(0, '#1e1b4b');
+      grad.addColorStop(0.5, '#115e59');
+      grad.addColorStop(1, '#042f2e');
+    } else {
+      // Golden Dawn Finale
+      grad.addColorStop(0, '#1d4ed8');
+      grad.addColorStop(0.42, '#f59e0b');
+      grad.addColorStop(0.7, '#fef08a');
+      grad.addColorStop(1, '#065f46');
+    }
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Architectural / World landmark silhouettes
+    ctx.save();
+    if (theme === 'yorknew') {
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+      for (let i = 0; i < 9; i++) {
+        const bw = w / 8;
+        const bh = h * (0.28 + ((i * 37) % 25) / 100);
+        ctx.fillRect(i * bw - 4, h * 0.62 - bh, bw - 3, bh);
+        ctx.fillStyle = 'rgba(250, 204, 21, 0.55)';
+        ctx.fillRect(i * bw + 6, h * 0.62 - bh + 14, 5, 5);
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+      }
+    } else if (theme === 'worldtree' || theme === 'darkcontinent') {
+      ctx.fillStyle = 'rgba(6, 78, 59, 0.55)';
+      ctx.beginPath();
+      ctx.moveTo(w * 0.36, h * 0.72);
+      ctx.quadraticCurveTo(w * 0.44, h * 0.35, w * 0.32, h * 0.08);
+      ctx.lineTo(w * 0.68, h * 0.08);
+      ctx.quadraticCurveTo(w * 0.56, h * 0.35, w * 0.64, h * 0.72);
+      ctx.closePath();
+      ctx.fill();
+    } else if (theme === 'whale') {
+      ctx.fillStyle = 'rgba(30, 41, 59, 0.85)';
+      ctx.beginPath();
+      ctx.ellipse(w * 0.5, h * 0.54, w * 0.44, h * 0.11, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Floating Nen particles
+    for (let i = 0; i < 18; i++) {
+      const px = ((i * 67 + t * 0.02 * (i % 3 + 1)) % w);
+      const py = h - ((i * 53 + t * 0.035) % h);
+      const rad = 1.5 + (i % 3);
+      ctx.fillStyle = i % 2 === 0 ? 'rgba(254, 240, 138, 0.45)' : 'rgba(52, 211, 153, 0.42)';
+      ctx.beginPath();
+      ctx.arc(px, py, rad, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  const CHAR_STYLES = {
+    gon:      { name: 'ゴン',     hair: '#064e3b', hairTip: '#10b981', outfit: '#15803d', trim: '#f97316', eye: '#78350f', spiky: true },
+    killua:   { name: 'キルア',   hair: '#e2e8f0', hairTip: '#bae6fd', outfit: '#1e3a8a', trim: '#f8fafc', eye: '#0284c7', spiky: true },
+    kurapika: { name: 'クラピカ', hair: '#facc15', hairTip: '#fef08a', outfit: '#1d4ed8', trim: '#f59e0b', eye: '#dc2626', spiky: false },
+    leorio:   { name: 'レオリオ', hair: '#1e293b', hairTip: '#334155', outfit: '#0f172a', trim: '#38bdf8', eye: '#334155', glasses: true },
+    hisoka:   { name: 'ヒソカ',   hair: '#e11d48', hairTip: '#fb7185', outfit: '#581c87', trim: '#f43f5e', eye: '#eab308', spiky: true },
+    chrollo:  { name: 'クロロ',   hair: '#0f172a', hairTip: '#312e81', outfit: '#1e1b4b', trim: '#a855f7', eye: '#475569', spiky: false },
+    meruem:   { name: 'メルエム', hair: '#065f46', hairTip: '#34d399', outfit: '#312e81', trim: '#facc15', eye: '#991b1b', crown: true },
+    komugi:   { name: 'コムギ',   hair: '#f1f5f9', hairTip: '#e2e8f0', outfit: '#be185d', trim: '#fbcfe8', eye: '#94a3b8', spiky: false },
+    alluka:   { name: 'アルカ',   hair: '#0f172a', hairTip: '#1e293b', outfit: '#e11d48', trim: '#fde047', eye: '#0284c7', spiky: false },
+    ging:     { name: 'ジン',     hair: '#1e293b', hairTip: '#475569', outfit: '#92400e', trim: '#f59e0b', eye: '#78350f', turban: true }
+  };
+
+  function drawCharacterPortrait(ctx, charId, cx, cy, scale, auraColor, isSpeaking, t) {
+    const st = CHAR_STYLES[charId];
+    if (!st) return;
+
+    ctx.save();
+    const bob = Math.sin(t / 280) * (isSpeaking ? 4.5 : 2);
+    ctx.translate(cx, cy + bob);
+    ctx.scale(scale, scale);
+
+    // Aura glow behind active speaker
+    if (isSpeaking) {
+      const auraMap = {
+        emerald: 'rgba(52, 211, 153, 0.36)',
+        cyan:    'rgba(56, 189, 248, 0.38)',
+        crimson: 'rgba(251, 113, 133, 0.38)',
+        gold:    'rgba(250, 204, 21, 0.38)',
+        violet:  'rgba(192, 132, 252, 0.38)'
+      };
+      const pulse = 1 + Math.sin(t / 160) * 0.07;
+      const rg = ctx.createRadialGradient(0, -10, 10, 0, -10, 88 * pulse);
+      rg.addColorStop(0, auraMap[auraColor] || auraMap.emerald);
+      rg.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = rg;
+      ctx.beginPath();
+      ctx.arc(0, -10, 88 * pulse, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      ctx.globalAlpha = 0.72;
+    }
+
+    // Shoulders & Outfit
+    ctx.fillStyle = st.outfit;
+    ctx.strokeStyle = '#090d16';
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    ctx.roundRect(-42, 22, 84, 78, 16);
+    ctx.fill();
+    ctx.stroke();
+
+    // Trim / Collar
+    ctx.fillStyle = st.trim;
+    ctx.beginPath();
+    ctx.moveTo(-18, 22);
+    ctx.lineTo(0, 44);
+    ctx.lineTo(18, 22);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Neck & Face
+    ctx.fillStyle = '#fed7aa';
+    ctx.fillRect(-9, 10, 18, 16);
+
+    ctx.beginPath();
+    ctx.arc(0, -12, 27, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Hair / Crown / Turban
+    ctx.fillStyle = st.hair;
+    if (st.crown) {
+      ctx.beginPath();
+      ctx.arc(0, -18, 28, Math.PI, 0);
+      ctx.fill();
+      ctx.stroke();
+    } else if (st.turban) {
+      ctx.fillStyle = '#e2e8f0';
+      ctx.beginPath();
+      ctx.ellipse(0, -30, 30, 14, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    } else if (st.spiky) {
+      ctx.beginPath();
+      ctx.moveTo(-28, -12);
+      ctx.lineTo(-34, -42);
+      ctx.lineTo(-14, -32);
+      ctx.lineTo(-8, -56);
+      ctx.lineTo(4, -34);
+      ctx.lineTo(16, -54);
+      ctx.lineTo(22, -30);
+      ctx.lineTo(34, -40);
+      ctx.lineTo(28, -12);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    } else {
+      ctx.beginPath();
+      ctx.arc(0, -15, 29, Math.PI * 0.88, Math.PI * 2.12);
+      ctx.lineTo(29, 10);
+      ctx.lineTo(20, 8);
+      ctx.lineTo(18, -14);
+      ctx.lineTo(-18, -14);
+      ctx.lineTo(-20, 8);
+      ctx.lineTo(-29, 10);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    // Eyes
+    ctx.fillStyle = st.eye;
+    ctx.beginPath();
+    ctx.arc(-10, -10, 3.6, 0, Math.PI * 2);
+    ctx.arc(10, -10, 3.6, 0, Math.PI * 2);
+    ctx.fill();
+
+    if (st.glasses) {
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(-18, -16, 15, 11);
+      ctx.strokeRect(3, -16, 15, 11);
+      ctx.beginPath();
+      ctx.moveTo(-3, -11);
+      ctx.lineTo(3, -11);
+      ctx.stroke();
+    }
+
+    // Mouth
+    ctx.strokeStyle = '#7c2d12';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    if (isSpeaking) {
+      ctx.arc(0, 3, 5, 0, Math.PI);
+    } else {
+      ctx.moveTo(-5, 4);
+      ctx.lineTo(5, 4);
+    }
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function renderVisualStage(now = 0) {
+    const line = SCRIPT[state.index] || SCRIPT[0];
+
+    // Main stage canvases
+    const bgFit = fitCanvas(document.getElementById('bg-canvas'));
+    if (bgFit.ctx) {
+      drawSceneBackground(bgFit.ctx, bgFit.w, bgFit.h, line.bg, now);
+    }
+
+    const chFit = fitCanvas(document.getElementById('char-canvas'));
+    if (chFit.ctx) {
+      chFit.ctx.clearRect(0, 0, chFit.w, chFit.h);
+      const sc = Math.max(1.05, Math.min(1.65, chFit.w / 245));
+      const baseY = chFit.h * 0.47;
+      if (line.left) {
+        const leftSpeaking = CHAR_STYLES[line.left]?.name === line.speaker;
+        drawCharacterPortrait(chFit.ctx, line.left, chFit.w * 0.28, baseY, sc, line.aura, leftSpeaking, now);
+      }
+      if (line.right) {
+        const rightSpeaking = CHAR_STYLES[line.right]?.name === line.speaker;
+        drawCharacterPortrait(chFit.ctx, line.right, chFit.w * 0.72, baseY, sc, line.aura, rightSpeaking, now);
+      }
+    }
+
+    // Title showcase canvas if visible
+    const titleScreen = document.getElementById('title-screen');
+    if (titleScreen && titleScreen.classList.contains('active')) {
+      const tFit = fitCanvas(document.getElementById('title-canvas'));
+      if (tFit.ctx) {
+        drawSceneBackground(tFit.ctx, tFit.w, tFit.h, 'dawn', now);
+        const sc = Math.max(0.72, tFit.h / 185);
+        const py = tFit.h * 0.62;
+        drawCharacterPortrait(tFit.ctx, 'gon', tFit.w * 0.20, py, sc, 'emerald', true, now);
+        drawCharacterPortrait(tFit.ctx, 'killua', tFit.w * 0.40, py, sc, 'cyan', true, now);
+        drawCharacterPortrait(tFit.ctx, 'kurapika', tFit.w * 0.60, py, sc, 'crimson', true, now);
+        drawCharacterPortrait(tFit.ctx, 'leorio', tFit.w * 0.80, py, sc, 'gold', true, now);
+      }
+    }
+
+    requestAnimationFrame(renderVisualStage);
+  }
+
+  /* =========================================================
+     6. DIALOGUE ENGINE, TYPEWRITER, CHOICES, AUTO & SKIP
+     ========================================================= */
+  let typeInterval = null;
+  let autoTimer = null;
+  let skipTimer = null;
+
+  function updateHudAndMeters() {
+    const line = SCRIPT[state.index] || SCRIPT[0];
+    const chap = CHAPTERS.find(c => c.id === line.arc) || CHAPTERS[0];
+    unlockArcUpTo(line.arc);
+
+    document.getElementById('hud-arc-badge').textContent = chap.title;
+    document.getElementById('hud-progress-pill').textContent = `進行 ${state.index + 1} / ${SCRIPT.length}`;
+    document.getElementById('hud-progress-bar').style.width = `${Math.round(((state.index + 1) / SCRIPT.length) * 100)}%`;
+    document.getElementById('scene-chip').textContent = line.loc;
+    document.getElementById('bond-meter-text').textContent = `✦ 絆・念の共鳴: ${state.bond}`;
+
+    const pcSide = document.getElementById('pc-side-status');
+    if (pcSide) {
+      pcSide.textContent = `現在: ${chap.title} (${state.index + 1}/${SCRIPT.length}) ｜ 絆: ${state.bond}`;
+    }
+
+    const chip = document.getElementById('mode-status-chip');
+    if (state.skipMode) {
+      chip.style.display = 'block';
+      chip.textContent = '⏩ SKIP';
+    } else if (state.autoMode) {
+      chip.style.display = 'block';
+      chip.textContent = '▶ AUTO';
+    } else {
+      chip.style.display = 'none';
+    }
+
+    document.getElementById('btn-auto').classList.toggle('is-on', state.autoMode);
+    document.getElementById('btn-skip').classList.toggle('is-on', state.skipMode);
+  }
+
+  function clearTimers() {
+    if (typeInterval) { clearInterval(typeInterval); typeInterval = null; }
+    if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
+    if (skipTimer) { clearTimeout(skipTimer); skipTimer = null; }
+  }
+
+  function recordBacklog(speaker, text) {
+    const last = state.backlog[state.backlog.length - 1];
+    if (!last || last.speaker !== speaker || last.text !== text) {
+      state.backlog.push({ speaker, text });
+      if (state.backlog.length > 60) state.backlog.shift();
+    }
+  }
+
+  function showChoiceBox(choiceObj) {
+    state.autoMode = false;
+    state.skipMode = false;
+    updateHudAndMeters();
+
+    const overlay = document.getElementById('choice-overlay');
+    const promptEl = document.getElementById('choice-prompt-text');
+    const wrap = document.getElementById('choice-buttons-wrap');
+    promptEl.textContent = choiceObj.prompt;
+    wrap.innerHTML = '';
+
+    choiceObj.options.forEach((opt, idx) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'choice-btn';
+      btn.innerHTML = `<span class="kbadge">${idx + 1}</span><span>${opt.label}</span>`;
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        selectChoiceOption(idx);
+      };
+      wrap.appendChild(btn);
+    });
+
+    overlay.classList.add('active');
+  }
+
+  function selectChoiceOption(optIndex) {
+    const line = SCRIPT[state.index];
+    if (!line || !line.choice) return;
+    const opt = line.choice.options[optIndex];
+    if (!opt) return;
+
+    document.getElementById('choice-overlay').classList.remove('active');
+    state.bond += opt.bond || 10;
+    audio.sfxAura();
+    updateHudAndMeters();
+
+    // Display immediate emotional reaction before advancing
+    recordBacklog('選択結果', opt.reply);
+    document.getElementById('speaker-name').textContent = '✦ 運命の選択';
+    document.getElementById('speaker-sub').textContent = `絆・念の共鳴 +${opt.bond || 10}`;
+    document.getElementById('dialogue-text').textContent = opt.reply;
+
+    // Advance after brief pause or next tap
+    state._choiceResolvedForIndex = state.index;
+  }
+
+  function presentLine(instant = false) {
+    clearTimers();
+    document.getElementById('choice-overlay').classList.remove('active');
+
+    const line = SCRIPT[state.index] || SCRIPT[0];
+    audio.playBgm(line.bgm || 'adventure');
+    updateHudAndMeters();
+
+    document.getElementById('speaker-name').textContent = line.speaker;
+    document.getElementById('speaker-sub').textContent = line.sub || '';
+    recordBacklog(line.speaker, line.text);
+
+    const textEl = document.getElementById('dialogue-text');
+    state.fullText = line.text;
+
+    if (instant || state.skipMode) {
+      state.typing = false;
+      textEl.textContent = line.text;
+      onLineFinishedTyping();
+      return;
+    }
+
+    state.typing = true;
+    state.displayedChars = 0;
+    textEl.textContent = '';
+
+    typeInterval = setInterval(() => {
+      state.displayedChars += 2;
+      if (state.displayedChars >= state.fullText.length) {
+        textEl.textContent = state.fullText;
+        state.typing = false;
+        clearInterval(typeInterval);
+        typeInterval = null;
+        onLineFinishedTyping();
+      } else {
+        textEl.textContent = state.fullText.slice(0, state.displayedChars);
+        if (state.displayedChars % 6 === 0) audio.sfxTypeTick();
+      }
+    }, 24);
+  }
+
+  function onLineFinishedTyping() {
+    const line = SCRIPT[state.index];
+    if (!line) return;
+
+    if (line.choice && state._choiceResolvedForIndex !== state.index) {
+      showChoiceBox(line.choice);
+      return;
+    }
+
+    if (state.skipMode) {
+      skipTimer = setTimeout(() => {
+        if (state.index < SCRIPT.length - 1) {
+          state.index++;
+          presentLine(true);
+        } else {
+          state.skipMode = false;
+          updateHudAndMeters();
+        }
+      }, 140);
+    } else if (state.autoMode) {
+      autoTimer = setTimeout(() => {
+        advanceStory();
+      }, 2100);
+    }
+  }
+
+  function advanceStory() {
+    audio.unlock();
+    const choiceOverlay = document.getElementById('choice-overlay');
+    if (choiceOverlay.classList.contains('active')) return;
+
+    const line = SCRIPT[state.index];
+    if (state.typing) {
+      clearTimers();
+      state.typing = false;
+      document.getElementById('dialogue-text').textContent = state.fullText;
+      onLineFinishedTyping();
+      return;
+    }
+
+    if (line && line.choice && state._choiceResolvedForIndex !== state.index) {
+      showChoiceBox(line.choice);
+      return;
+    }
+
+    if (state.index < SCRIPT.length - 1) {
+      state.index++;
+      audio.sfxAdvance();
+      presentLine(false);
+    } else {
+      // Final ending reached!
+      state.autoMode = false;
+      state.skipMode = false;
+      updateHudAndMeters();
+      audio.sfxChoice();
+      const rankTitle = state.bond >= 75 ? '【真・S級ハンター完結エンド】' : '【希望の夜明け完結エンド】';
+      showToast(`${rankTitle} 全10章完走おめでとうございます！（メニューから章選択も可能）`, 4800);
+    }
+  }
+
+  /* =========================================================
+     7. MODALS: SAVE/LOAD/DELETE, BACKLOG, CHAPTER JUMP & MUTE
+     ========================================================= */
+  function isAnyModalOpen() {
+    return ['title-screen', 'save-modal', 'log-modal', 'menu-modal'].some(id => {
+      const el = document.getElementById(id);
+      return el && el.classList.contains('active');
+    });
+  }
+
+  function closeAllModals() {
+    ['save-modal', 'log-modal', 'menu-modal'].forEach(id => {
+      document.getElementById(id).classList.remove('active');
+    });
+    state.pendingDeleteSlot = null;
+    state.pendingPurgeAll = false;
+  }
+
+  function openSaveModal(mode) {
+    state.saveMode = mode;
+    state.autoMode = false;
+    state.skipMode = false;
+    state.pendingDeleteSlot = null;
+    state.pendingPurgeAll = false;
+    updateHudAndMeters();
+
+    document.getElementById('save-modal-title').textContent =
+      mode === 'save' ? '💾 セーブスロット選択' : '📂 ロードスロット選択';
+    document.getElementById('btn-purge-all-saves').textContent = '🗑 すべてのセーブデータを削除する';
+    renderSaveSlots();
+    document.getElementById('save-modal').classList.add('active');
+  }
+
+  function renderSaveSlots() {
+    const wrap = document.getElementById('save-slots-container');
+    wrap.innerHTML = '';
+    const slots = readSaveSlots();
+
+    for (let s = 1; s <= MAX_SLOTS; s++) {
+      const item = slots[String(s)];
+      const card = document.createElement('div');
+      card.className = 'card-box';
+      card.style.display = 'flex';
+      card.style.flexDirection = 'column';
+      card.style.gap = '6px';
+
+      if (item) {
+        const delPending = state.pendingDeleteSlot === s;
+        card.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <strong style="color:var(--gold);">SLOT ${s}：${item.arcTitle}</strong>
+            <span style="font-size:11px;color:var(--text-muted);">${item.timestamp}</span>
+          </div>
+          <div style="font-size:11.5px;color:#cbd5e1;">${item.loc} ｜ 絆・念の共鳴: ${item.bond || 0}</div>
+          <div style="display:flex;gap:6px;margin-top:2px;">
+            ${state.saveMode === 'save'
+              ? `<button type="button" class="mini-btn gold" style="flex:1;" data-act="save" data-slot="${s}">💾 上書きセーブ</button>`
+              : `<button type="button" class="mini-btn gold" style="flex:1;" data-act="load" data-slot="${s}">📂 このデータをロード</button>`
+            }
+            <button type="button" class="mini-btn danger" data-act="del" data-slot="${s}">${delPending ? '⚠ 削除確定' : '🗑 削除'}</button>
+          </div>
+        `;
+      } else {
+        card.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <strong style="color:var(--text-muted);">SLOT ${s}：空きスロット</strong>
+            ${state.saveMode === 'save'
+              ? `<button type="button" class="mini-btn gold" data-act="save" data-slot="${s}">💾 ここにセーブ</button>`
+              : `<span style="font-size:11px;color:#64748b;">データなし</span>`
+            }
+          </div>
+        `;
+      }
+
+      card.querySelectorAll('button').forEach(btn => {
+        btn.onclick = () => {
+          const act = btn.dataset.act;
+          const slotNum = parseInt(btn.dataset.slot, 10);
+          if (act === 'save') saveToSlot(slotNum);
+          else if (act === 'load') loadFromSlot(slotNum);
+          else if (act === 'del') deleteSlot(slotNum);
+        };
+      });
+
+      wrap.appendChild(card);
+    }
+  }
+
+  function openBacklogModal() {
+    state.autoMode = false;
+    state.skipMode = false;
+    updateHudAndMeters();
+
+    const list = document.getElementById('backlog-list');
+    list.innerHTML = '';
+    if (state.backlog.length === 0) {
+      list.innerHTML = '<div class="card-box">まだ会話履歴がありません。</div>';
+    } else {
+      state.backlog.forEach(entry => {
+        const row = document.createElement('div');
+        row.className = 'card-box';
+        row.style.padding = '7px 10px';
+        row.innerHTML = `<div style="font-weight:900;color:var(--gold);font-size:11.5px;">${entry.speaker}</div><div style="font-size:12px;">${entry.text}</div>`;
+        list.appendChild(row);
+      });
+    }
+    document.getElementById('log-modal').classList.add('active');
+    list.scrollTop = list.scrollHeight;
+  }
+
+  function openSystemMenuModal() {
+    state.autoMode = false;
+    state.skipMode = false;
+    updateHudAndMeters();
+
+    const wrap = document.getElementById('chapter-list-wrap');
+    wrap.innerHTML = '';
+    CHAPTERS.forEach(ch => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'mini-btn';
+      btn.style.textAlign = 'left';
+      btn.style.padding = '7px 10px';
+      btn.innerHTML = `<strong style="color:${ch.id >= 9 ? '#fde047' : '#6ee7b7'};">${ch.title}</strong><br><span style="font-size:11px;color:#cbd5e1;">${ch.sub}</span>`;
+      btn.onclick = () => {
+        const targetIdx = SCRIPT.findIndex(s => s.arc === ch.id);
+        if (targetIdx >= 0) {
+          state.index = targetIdx;
+          closeAllModals();
+          document.getElementById('title-screen').classList.remove('active');
+          audio.sfxChoice();
+          presentLine(false);
+        }
+      };
+      wrap.appendChild(btn);
+    });
+
+    document.getElementById('menu-modal').classList.add('active');
+  }
+
+  function syncMuteButtons() {
+    const label = audio.enabled ? '🔊 サウンド: ON' : '🔇 サウンド: OFF';
+    document.getElementById('btn-title-mute').innerHTML = `${label} <span class="kbadge">M</span>`;
+    document.getElementById('btn-menu-mute').textContent = `${audio.enabled ? '🔊 音声: ON' : '🔇 音声: OFF'} [M]`;
+  }
+
+  /* =========================================================
+     8. EVENT WIRING (MOBILE TOUCH & PC KEYBOARD)
+     ========================================================= */
+  document.getElementById('stage-area').addEventListener('click', () => {
+    if (isAnyModalOpen()) return;
+    advanceStory();
+  });
+
+  document.getElementById('btn-auto').onclick = () => {
+    audio.unlock();
+    state.autoMode = !state.autoMode;
+    if (state.autoMode) state.skipMode = false;
+    updateHudAndMeters();
+    if (state.autoMode && !state.typing) onLineFinishedTyping();
+  };
+
+  document.getElementById('btn-skip').onclick = () => {
+    audio.unlock();
+    state.skipMode = !state.skipMode;
+    if (state.skipMode) state.autoMode = false;
+    updateHudAndMeters();
+    if (state.skipMode) presentLine(true);
+  };
+
+  document.getElementById('btn-log').onclick = openBacklogModal;
+  document.getElementById('btn-save').onclick = () => openSaveModal('save');
+  document.getElementById('btn-load').onclick = () => openSaveModal('load');
+  document.getElementById('btn-menu').onclick = openSystemMenuModal;
+
+  document.getElementById('btn-title-start').onclick = () => {
+    audio.unlock();
+    state.index = 0;
+    state.bond = 0;
+    state.backlog = [];
+    state._choiceResolvedForIndex = -1;
+    document.getElementById('title-screen').classList.remove('active');
+    audio.sfxChoice();
+    presentLine(false);
+  };
+
+  document.getElementById('btn-title-continue').onclick = () => {
+    audio.unlock();
+    openSaveModal('load');
+  };
+
+  document.getElementById('btn-title-chapters').onclick = () => {
+    audio.unlock();
+    openSystemMenuModal();
+  };
+
+  document.getElementById('btn-title-mute').onclick = () => {
+    audio.toggleMute();
+    syncMuteButtons();
+  };
+
+  document.getElementById('btn-title-del-all').onclick = () => {
+    openSaveModal('load');
+    purgeAllSaves();
+  };
+
+  document.getElementById('btn-close-save').onclick = closeAllModals;
+  document.getElementById('btn-purge-all-saves').onclick = purgeAllSaves;
+  document.getElementById('btn-close-log').onclick = closeAllModals;
+  document.getElementById('btn-close-menu').onclick = closeAllModals;
+
+  document.getElementById('btn-menu-mute').onclick = () => {
+    audio.toggleMute();
+    syncMuteButtons();
+  };
+
+  document.getElementById('btn-menu-title').onclick = () => {
+    clearTimers();
+    state.autoMode = false;
+    state.skipMode = false;
+    closeAllModals();
+    document.getElementById('title-screen').classList.add('active');
+    audio.playBgm('adventure');
+  };
+
+  // Full PC Keyboard Support
+  window.addEventListener('keydown', (e) => {
+    const k = e.key.toLowerCase();
+
+    if (k === 'm') {
+      audio.toggleMute();
+      syncMuteButtons();
+      return;
+    }
+
+    if (k === 'escape') {
+      if (['save-modal', 'log-modal', 'menu-modal'].some(id => document.getElementById(id).classList.contains('active'))) {
+        closeAllModals();
+      } else if (!document.getElementById('title-screen').classList.contains('active')) {
+        openSystemMenuModal();
+      }
+      return;
+    }
+
+    if (document.getElementById('title-screen').classList.contains('active')) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        document.getElementById('btn-title-start').click();
+      } else if (k === 'o') {
+        openSaveModal('load');
+      }
+      return;
+    }
+
+    if (isAnyModalOpen()) return;
+
+    const choiceOverlay = document.getElementById('choice-overlay');
+    if (choiceOverlay.classList.contains('active')) {
+      if (['1', '2', '3', '4'].includes(e.key)) {
+        selectChoiceOption(parseInt(e.key, 10) - 1);
+      }
+      return;
+    }
+
+    if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      advanceStory();
+    } else if (k === 'a') {
+      document.getElementById('btn-auto').click();
+    } else if (k === 's') {
+      document.getElementById('btn-skip').click();
+    } else if (k === 'l') {
+      openBacklogModal();
+    } else if (k === 'k') {
+      openSaveModal('save');
+    } else if (k === 'o') {
+      openSaveModal('load');
+    }
+  });
+
+  // Start rendering loop
+  requestAnimationFrame(renderVisualStage);
+})();
+</script>
+</body>
+</html>
